@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+    <title>Python For Finance</title>
+  </head>
+
+  <!-- As a heading -->
+  <nav class="navbar navbar-light bg-light">
+    <a href = "/"><span class="navbar-brand mb-0 pl-5 ml-5" style=" align-self: center; color: green; ">Python For Finance</span></a>
+
+  </nav>
+
+  <body>
+    <h2 class="my-5" style="text-align: center;">“An investment in knowledge pays the best interest.” – Benjamin Franklin</h2>
+    
+    <div class="row mx-auto" style=" display: flex; justify-content: center; align-items: center;">
+      <div style="margin-right: 3rem; padding: 3rem 2rem; width: 15rem; text-align: center; ">
+          {% if request.session.sensex_change > 0 %}
+          <div class="alert alert-success" role="alert">
+          {% else %}
+          <div class="alert alert-danger"  role = "alert">
+          {% endif %}
+          <span>Sensex 30</span><br>
+          <span>{{request.session.sensex}}</span><br>
+          <span>{{request.session.sensex_change}}  {{request.session.sensex_pct}}</span>
+          </div>
+      </div>
+      <div style="margin-left: 3rem; padding: 3rem 2rem; width: 15rem; text-align: center;">
+        {% if request.session.nifty_change > 0 %}
+        <div class="alert alert-success" role="alert">
+        {% else %}
+        <div class="alert alert-danger" role="alert">
+        {% endif %}
+        <span>Nifty 50</span><br>
+        <span>{{request.session.nifty}}</span><br>
+        <span>{{request.session.nifty_change}}  {{request.session.nifty_pct}}</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      
+      <form action = "" method="POST" class="form-inline col-lg-4 mx-auto my-5">
+        {% csrf_token %}
+        <input class="form-control mr-sm-2" type="search" name="search" placeholder="Try ICICIBANK or Gail" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+    {% if current_m_price %}
+    <h1 class="mx-auto" style="text-align: center; ">{{request.session.ticker}}</h1>
+    <div class="accordion mx-auto col-lg-8 mb-5" id="accordionExample">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Current Market Price
+            </button>
+          </h2>
+        </div>
+    
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+            {{current_m_price}}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Nearest Monthly Support
+            </button>
+          </h2>
+        </div>
+        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionExample">
+          <div class="card-body">
+            {{n_support}}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              Nearest Resistance Level
+            </button>
+          </h2>
+        </div>
+        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body">
+            {{n_resistance}}
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapse8" aria-expanded="false" aria-controls="collapseThree">
+              Data Visualization
+            </button>
+          </h2>
+        </div>
+        <div id="collapse8" class="collapse show" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body mx-auto">
+            <div id="myDiv"></div>
+            {% load static %}
+            <script>
+              Plotly.d3.csv("{% static request.session.mcsv %}", function (err, rows) {
+
+                function unpack(rows, key) {
+                    return rows.map(function (row) { return row[key]; });
+                }
+                var tick = "{{request.session.ticker}}";
+                var support = "{{n_support}}"
+                var resistance = "{{n_resistance}}"
+
+                var trace1 = {
+                  x: unpack(rows, 'Date'),
+                  close: unpack(rows, 'Close'),
+                  high: unpack(rows, 'High'),
+                  low: unpack(rows, 'Low'),
+                  open: unpack(rows, 'Open'),
+
+                  // cutomise colors
+                  increasing: {line: {color: 'green'}},
+                  decreasing: {line: {color: 'red'}},
+
+                  type: 'candlestick',
+                  xaxis: 'x',
+                  yaxis: 'y'
+                }
+                var resistance_line = {
+                type: "scatter",
+                mode: "line",
+                name: 'Nearest Resistance',
+                x: unpack(rows, 'Date'),
+                y: [resistance],
+                line: { color: 'green' }
+                }
+
+                var support_line = {
+                type: "scatter",
+                mode: "line",
+                name: 'Nearest Support',
+                x: unpack(rows, 'Date'),
+                y: [support],
+                line: { color: 'blue' }
+                }
+                var date1 = new Date();
+                date1.setMonth(date1.getMonth() - 180);
+                var data = [trace1, resistance_line, support_line];
+                var currentTime = new Date();
+                var layout = {
+                    title: tick + ' Monthly Chart (15 years)',
+                    xaxis: {
+                        autorange: true,
+                        range: [date1, currentTime],
+                        rangeselector: {
+                          visible: false
+                        },
+                        type: 'date'
+                    },
+                    yaxis: {
+                        autorange: true ,
+                        range: [date1, currentTime]
+                    },
+                    shapes: [
+                    {
+                      type: 'line',
+                      x0: date1,
+                      y0: resistance,
+                      x1: currentTime,
+                      y1: resistance,
+                      line: {
+                        color: 'rgb(50, 171, 96)',
+                        width: 1,
+                    }
+                    },
+                    {
+                      type: 'line',
+                      x0: date1,
+                      y0: support,
+                      x1: currentTime,
+                      y1: support,
+                      line: {
+                        color: 'blue',
+                        width: 1,
+                    }
+                    }
+                  ],
+                };
+
+                Plotly.newPlot('myDiv', data, layout );
+              });
+            </script>
+            <div id="myDiv1"></div>
+            {% load static %}
+            <script>
+              Plotly.d3.csv("{% static request.session.dcsv %}", function (err, rows) {
+
+                function unpack(rows, key) {
+                    return rows.map(function (row) { return row[key]; });
+                }
+                var tick = "{{request.session.ticker}}";
+                var support = "{{n_support}}"
+                var resistance = "{{n_resistance}}"
+
+                var trace1 = {
+                  x: unpack(rows, 'Date'),
+                  close: unpack(rows, 'Close'),
+                  high: unpack(rows, 'High'),
+                  low: unpack(rows, 'Low'),
+                  open: unpack(rows, 'Open'),
+
+                  // cutomise colors
+                  increasing: {line: {color: 'green'}},
+                  decreasing: {line: {color: 'red'}},
+
+                  type: 'candlestick',
+                  xaxis: 'x',
+                  yaxis: 'y'
+                }
+                var resistance_line = {
+                type: "scatter",
+                mode: "line",
+                name: 'Nearest Resistance',
+                x: unpack(rows, 'Date'),
+                y: [resistance],
+                line: { color: 'green' }
+                }
+
+                var support_line = {
+                type: "scatter",
+                mode: "line",
+                name: 'Nearest Support',
+                x: unpack(rows, 'Date'),
+                y: [support],
+                line: { color: 'blue' }
+                }
+
+                var data = [trace1, resistance_line, support_line];
+                var currentTime = new Date();
+                var date1 = new Date();
+                date1.setDate(1);
+                date1.setMonth(date1.getMonth()-6);
+                var layout = {
+                    title: tick + ' Daily Chart(6 Months)',
+                    xaxis: {
+                        autorange: true,
+                        range: [date1, currentTime],
+                        rangeselector: {
+                          visible: false
+                        },
+                        type: 'date'
+                    },
+                    yaxis: {
+                        autorange: true ,
+                        range: [date1, currentTime]
+                    },
+                    shapes: [
+                    {
+                      type: 'line',
+                      x0: date1,
+                      y0: resistance,
+                      x1: currentTime,
+                      y1: resistance,
+                      line: {
+                        color: 'rgb(50, 171, 96)',
+                        width: 1,
+                    }
+                    },
+                    {
+                      type: 'line',
+                      x0: date1,
+                      y0: support,
+                      x1: currentTime,
+                      y1: support,
+                      line: {
+                        color: 'blue',
+                        width: 1,
+                    }
+                    }
+                  ],
+                };
+
+                Plotly.newPlot('myDiv1', data, layout );
+              });
+            </script>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapse4" aria-expanded="false" aria-controls="collapseThree">
+              Reward-Risk Ratio
+            </button>
+          </h2>
+        </div>
+        <div id="collapse4" class="collapse show" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body">
+            {{reward_risk}}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapse5" aria-expanded="false" aria-controls="collapseThree">
+              Our Recommendation
+            </button>
+          </h2>
+        </div>
+        <div id="collapse5" class="collapse show" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body">
+            {% if flag == 1 %}
+            This is the right time to buy the stock.
+            {% elif flag == 2 %}
+            Reward Risk Ratio is good but also see the stock performance before investing.
+            {% else %}
+            This is not the right time to buy the shares. Select some other company.
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapse6" aria-expanded="false" aria-controls="collapseThree">
+              Monthly Trend
+            </button>
+          </h2>
+        </div>
+        <div id="collapse6" class="collapse show" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body">
+            {{monthly_trend}}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapse7" aria-expanded="false" aria-controls="collapseThree">
+              Daily Trend
+            </button>
+          </h2>
+        </div>
+        <div id="collapse7" class="collapse show" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body">
+            {{daily_trend}}
+          </div>
+        </div>
+      </div>
+
+    </div>
+    {% endif %}
+    
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    
+  </body>
+</html>
