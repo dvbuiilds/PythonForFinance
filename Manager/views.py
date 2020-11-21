@@ -9,7 +9,7 @@ from datetime import datetime
 # Create your views here.
 class Index(View):
     def get(self, request):
-        data = Scrap()
+        data = Scrap(request)
 
         request.session['nifty'] = data['nifty']
         request.session['nifty_change'] = data['nifty_change']
@@ -54,7 +54,7 @@ class Index(View):
             return render(request, 'index.html', data)
 
 
-def Scrap():
+def Scrap(request):
     data = None
     try:
         print("Hello")
@@ -90,6 +90,7 @@ def Scrap():
         dateTimeObj = datetime.now()
         timestampStr = dateTimeObj.strftime("%m-%d-%H")
         path = timestampStr + 'sennifty.pickle'
+        request.session['sennif_path'] = path
         with open(path, 'wb') as handle:
             pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
@@ -97,8 +98,13 @@ def Scrap():
         print("Something went wrong")
         dateTimeObj = datetime.now()
         timestampStr = dateTimeObj.strftime("%m-%d-%H")
-        path = '11-13-14sennifty.pickle'
-        with open(path, 'rb') as handle:
-            data = pickle.load(handle)
+        path = request.session['sennif_path']
+        if path:
+            with open(path, 'rb') as handle:
+                data = pickle.load(handle)
+        else:
+            path = '11-13-21sennifty.pickle'
+            with open(path, 'rb') as handle:
+                data = pickle.load(handle)
  
     return data
