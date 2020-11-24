@@ -115,17 +115,17 @@ def criticalpoints(data_m, ticker):
     for i in range(leng):
         dict = {}
 
-    for t in Res:
-        if ( abs((Res[i]-t)*100/Res[i]) < 4):
-            dict.update({t: Res.index(t)})
+        for t in Res:
+            if ( abs((Res[i]-t)*100/Res[i]) < 4):
+                dict.update({t: Res.index(t)})
 
-    tmp = dict.keys()
-    l = len(tmp)
-    avg = sum(tmp)/l
+        tmp = dict.keys()
+        l = len(tmp)
+        avg = sum(tmp)/l
 
-    for x in Res:
-        if x in tmp:
-            Res[dict[x]] = avg
+        for x in Res:
+            if x in tmp:
+                Res[dict[x]] = avg
 
     print(Res)
     temp = []
@@ -140,17 +140,17 @@ def criticalpoints(data_m, ticker):
     for i in range(leng):
         dict = {}
 
-    for t in Sup:
-        if ( abs((Sup[i]-t)*100/Sup[i]) < 4):
-            dict.update({t: Sup.index(t)})
+        for t in Sup:
+            if ( abs((Sup[i]-t)*100/Sup[i]) < 4):
+                dict.update({t: Sup.index(t)})
 
-    tmp = dict.keys()
-    l = len(tmp)
-    avg = sum(tmp)/l
+        tmp = dict.keys()
+        l = len(tmp)
+        avg = sum(tmp)/l
 
-    for x in Sup:
-        if x in tmp:
-            Sup[dict[x]] = avg
+        for x in Sup:
+            if x in tmp:
+                Sup[dict[x]] = avg
 
     print(Sup)
     temp = []
