@@ -89,7 +89,7 @@ def Scrap(request):
 
         dateTimeObj = datetime.now()
         timestampStr = dateTimeObj.strftime("%m-%d-%H")
-        path = timestampStr + 'sennifty.pickle'
+        path = 'picklefiles/'+ timestampStr + '-sennifty.pickle'
         request.session['sennif_path'] = path
         with open(path, 'wb') as handle:
             pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
