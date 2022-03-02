@@ -1,15 +1,15 @@
 
-from django.shortcuts import render, redirect
-from django.views import View
+# from django.shortcuts import render, redirect
+# from django.views import View
 
 import datetime as dt
 import pandas as pd
 import pandas_datareader.data as web
-import bs4 as bs
-#import pickle
-import requests
-import os
-import numpy as np
+# import bs4 as bs
+# import pickle
+# import requests
+# import os
+# import numpy as np
 
 
 def find_ticker(keyword):
