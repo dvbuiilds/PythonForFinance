@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.views import View
-from .functions import find_ticker, create_csv, monthly_trend, daily_trend, criticalpoints, closest_criticals, rrratio
+from .functions import find_ticker, create_csv, monthly_trend, daily_trend, criticalpoints, rrratio
 import bs4 as bs
 import requests
 import pickle
