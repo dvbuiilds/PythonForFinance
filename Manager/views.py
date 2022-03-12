@@ -57,7 +57,6 @@ class Index(View):
 def Scrap(request):
     data = None
     try:
-        print("Hello")
         resp = requests.get('https://economictimes.indiatimes.com/indices/nifty_50_companies')
         soup = bs.BeautifulSoup(resp.text, 'lxml')
 
