@@ -153,7 +153,6 @@ def criticalpoints(data_m, ticker):
 
 #Nearest support and Resistance.
 def closest_criticals(cric_arr, bprice):
-
     lo1 = max(cric_arr)-bprice
     lo2 = bprice-min(cric_arr)
     req1 = req2 = bprice
@@ -172,7 +171,6 @@ def closest_criticals(cric_arr, bprice):
 
 #Reward Risk Ratio.
 def rrratio(Res, Sup, High, Low):
-
     l1 = len(High) - 1
     buy_price = (High[l1]+Low[l1])/2
     target, stop_loss = closest_criticals(Res + Sup, buy_price)#nearest support to buy price
