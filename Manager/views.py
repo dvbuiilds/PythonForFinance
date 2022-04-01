@@ -5,11 +5,9 @@ import bs4 as bs
 import requests
 import pickle
 from datetime import datetime
-from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 class Index(View):
-    @csrf_exempt
     def get(self, request):
         data = Scrap(request)
         request.session['nifty'] = data['nifty']
@@ -20,7 +18,6 @@ class Index(View):
         request.session['sensex_pct'] = data['sensex_pct']
         return render(request, 'index.html')
 
-    @csrf_exempt
     def post(self, request):
         data = {}
         name_key = request.POST['search']
