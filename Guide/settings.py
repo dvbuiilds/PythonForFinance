@@ -26,8 +26,9 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = ['pyfindv.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['pyfindv.herokuapp.com', 'localhost', '127.0.0.1', 'https://pyfindv.herokuapp.com']
 
+CSRF_TRUSTED_ORIGINS = ['https://pyfindv.herokuapp.com']
 
 # Application definition
 
